@@ -517,11 +517,14 @@
 
       function createBody(asset, idx) {
         const { g, img, shape } = asset;
+        const s = visualScale();
+        const sw = g.w * s;
+        const sh = g.h * s;
 
         const el = document.createElement("div");
         el.className = "glyph";
-        el.style.width = `${g.w}px`;
-        el.style.height = `${g.h}px`;
+        el.style.width = `${sw}px`;
+        el.style.height = `${sh}px`;
         el.dataset.nodeId = g.id;
 
         const imgEl = document.createElement("img");
@@ -530,8 +533,8 @@
         el.appendChild(imgEl);
         world.appendChild(el);
 
-        const sx = g.w / Math.max(1, img.naturalWidth);
-        const sy = g.h / Math.max(1, img.naturalHeight);
+        const sx = sw / Math.max(1, img.naturalWidth);
+        const sy = sh / Math.max(1, img.naturalHeight);
         const parts = (shape.parts || []).map((p) => {
           const pw = Math.max(2, p.w * sx);
           const ph = Math.max(2, p.h * sy);
@@ -540,20 +543,20 @@
           return {
             w: pw,
             h: ph,
-            offX: cx - g.w * 0.5,
-            offY: cy - g.h * 0.5,
+            offX: cx - sw * 0.5,
+            offY: cy - sh * 0.5,
           };
         });
 
         const areaSum = parts.reduce((acc, p) => acc + p.w * p.h, 0);
         const m = Math.max(1, areaSum / 5200);
-        const inertia = (m * (g.w * g.w + g.h * g.h)) / 12;
+        const inertia = (m * (sw * sw + sh * sh)) / 12;
 
         bodies.push({
           el,
-          w: g.w,
-          h: g.h,
-          x: rand(g.w * 0.5, Math.max(g.w * 0.5, worldW - g.w * 0.5)),
+          w: sw,
+          h: sh,
+          x: rand(sw * 0.5, Math.max(sw * 0.5, worldW - sw * 0.5)),
           y: -rand(120, 2600) - idx * 70,
           vx: rand(-40, 40),
           vy: rand(0, 15),
@@ -568,6 +571,10 @@
       function onResize() {
         worldW = window.innerWidth;
         worldH = window.innerHeight;
+      }
+
+      function visualScale() {
+        return worldW <= 900 ? 0.86 : 1;
       }
 
       function onPointerMove(e) {
