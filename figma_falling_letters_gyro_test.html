@@ -707,7 +707,13 @@
       }
 
       function visualScale() {
-        return worldW <= 900 ? 0.86 : 1;
+        const shortSide = Math.min(worldW, worldH);
+        if (shortSide <= 390) return 0.68;
+        if (shortSide <= 430) return 0.72;
+        if (shortSide <= 520) return 0.78;
+        if (shortSide <= 700) return 0.84;
+        if (shortSide <= 900) return 0.9;
+        return 1;
       }
 
       function onPointerMove(e) {
