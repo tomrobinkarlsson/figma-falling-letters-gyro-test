@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Figma Exact Vectors Falling</title>
+  <style>
+    :root { --bg: #cfcfd2; }
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    #world {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .glyph {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: center center;
+      pointer-events: none;
+      user-select: none;
+      will-change: transform;
+    }
+
+    .glyph img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="world"></div>
+
+  <script>
+    (() => {
+      const GLYPHS = [
+        { id: "196:148", w: 332.8502585250709, h: 246.32305908203125, src: "https://www.figma.com/api/mcp/asset/d1bb1c3d-353a-470c-9e8b-9a017f53705f" },
+        { id: "196:149", w: 182.823429799748, h: 246.32305908203125, src: "https://www.figma.com/api/mcp/asset/75cf341a-fe53-4eec-9bf0-68ee0b87b3a3" },
+        { id: "196:150", w: 166.77405836971684, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/b3a12915-43e2-4b1a-a97a-db4ff0e9c7aa" },
+        { id: "196:169", w: 198.17504922445244, h: 258.1856535562474, src: "https://www.figma.com/api/mcp/asset/9d6a7579-829a-47b6-9989-e13e1c24cb7c" },
+        { id: "196:168", w: 33.49444687149662, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/68b08f5e-5e2e-48cd-b5f7-76b3f89fb9d8" },
+        { id: "196:166", w: 33.49446445435319, h: 246.32302971803438, src: "https://www.figma.com/api/mcp/asset/f79caa46-eb66-43be-bbaf-a2e4bd6a1506" },
+        { id: "196:153", w: 193.29037026433775, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/7b950436-c9e8-4bf8-b9c1-fac92381cf81" },
+        { id: "196:157", w: 210.38642958967444, h: 246.32305908203125, src: "https://www.figma.com/api/mcp/asset/21e12442-f6a9-4223-8890-0c9fb14ceb1d" },
+        { id: "196:147", w: 234.11165810416537, h: 258.1856689453125, src: "https://www.figma.com/api/mcp/asset/73e85cea-910b-498f-8a6e-2082812a0544" },
+        { id: "196:172", w: 33.494461120060805, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/ca01f981-cbbc-4684-aa5b-3cf56a254cc9" },
+        { id: "196:170", w: 234.11168968187076, h: 258.1856535562474, src: "https://www.figma.com/api/mcp/asset/9f3c801f-8d42-4eac-9a90-6050916128d6" },
+        { id: "196:152", w: 198.17496391694158, h: 258.18562277811725, src: "https://www.figma.com/api/mcp/asset/92580f11-9e88-4434-a126-3593b065b0bb" },
+        { id: "196:161", w: 234.11164989957024, h: 258.1856535562474, src: "https://www.figma.com/api/mcp/asset/9932a90b-c1bd-4a41-b70d-db0f695b7fd9" },
+        { id: "196:154", w: 195.3838336893591, h: 252.25434897814011, src: "https://www.figma.com/api/mcp/asset/f9245cc8-afe8-4929-b2e1-743ad7451013" },
+        { id: "196:158", w: 166.77406032119598, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/d3bcfd56-2ff2-457b-b61c-e0418e2d9cff" },
+        { id: "196:146", w: 332.85027706028586, h: 246.32305908203125, src: "https://www.figma.com/api/mcp/asset/a3650a58-b403-4d86-ada5-205cdf10b47c" },
+        { id: "196:173", w: 210.38647790106734, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/c56a1e20-0246-4638-949d-3e56f676d04b" },
+        { id: "196:171", w: 182.82346414629774, h: 246.32305908203125, src: "https://www.figma.com/api/mcp/asset/38ce83ef-519c-4cc3-b448-b2be83a70d35" },
+        { id: "196:164", w: 166.7740582371962, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/3852e26e-12ec-4db1-8798-79c8e45274b9" },
+        { id: "196:162", w: 195.38378191391712, h: 252.25434897814011, src: "https://www.figma.com/api/mcp/asset/b34751d5-af37-485a-88b1-6c39914b33eb" },
+        { id: "196:159", w: 198.17501913534034, h: 258.1856535562474, src: "https://www.figma.com/api/mcp/asset/f5762913-1bf5-4cdf-a2e6-26a01f751d32" },
+        { id: "196:155", w: 198.17501407249983, h: 258.18563816718233, src: "https://www.figma.com/api/mcp/asset/3cd3c1cc-98c3-4505-8aed-7840591d825f" },
+        { id: "196:174", w: 223.29578194332043, h: 258.1856689453125, src: "https://www.figma.com/api/mcp/asset/fca72513-640b-429e-823e-bf90e2e86335" },
+        { id: "196:151", w: 159.09828847804602, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/0e9b5197-f9fa-4e74-9104-d42f1ac2e6dd" },
+        { id: "196:167", w: 166.77405836971684, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/af9e5e75-fc04-4cec-94b9-e696415b9bad" },
+        { id: "196:165", w: 197.12829653061908, h: 246.3230444000328, src: "https://www.figma.com/api/mcp/asset/f42da333-7b7a-4cc5-8a7c-bf9134a15b90" },
+        { id: "196:163", w: 198.17504552620812, h: 258.1856535562474, src: "https://www.figma.com/api/mcp/asset/8d5606b9-c9f3-4ce5-8683-d75349f38688" },
+        { id: "196:156", w: 33.494404160331214, h: 246.32305908203125, src: "https://www.figma.com/api/mcp/asset/1b0cb91d-7b8d-4808-8b08-7a452d977a1a" },
+        { id: "196:160", w: 198.17502720289667, h: 258.18563816718233, src: "https://www.figma.com/api/mcp/asset/1371d258-2020-4172-be31-11759678ce01" }
+      ];
+
+      const world = document.getElementById("world");
+      const bodies = [];
+      let worldW = window.innerWidth;
+      let worldH = window.innerHeight;
+      let prevT = performance.now();
+      let simStart = performance.now();
+      let settleFrames = 0;
+      let interactionReady = false;
+      let pointerActive = false;
+      let pointerDown = false;
+      const pointer = { x: 0, y: 0, vx: 0, vy: 0, t: 0 };
+
+      const cfg = {
+        gravity: 3600,
+        linDamp: 0.022,
+        angDamp: 0.045,
+        friction: 0.94,
+        iterations: 12,
+        settleFramesNeeded: 26,
+        settleEnergyPerBody: 11,
+        interactionMaxDelayMs: 6000,
+        interactionForceEnableMs: 3200,
+        cursorRadius: 390,
+        cursorForce: 43000,
+        cursorForceBoost: 3.8,
+        cursorSpin: 0.0004,
+      };
+
+      function rand(min, max) { return min + Math.random() * (max - min); }
+      function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+      function cross(ax, ay, bx, by) { return ax * by - ay * bx; }
+
+      function rot(x, y, a) {
+        const c = Math.cos(a);
+        const s = Math.sin(a);
+        return { x: x * c - y * s, y: x * s + y * c };
+      }
+
+      function alphaShape(img) {
+        try {
+          const w = img.naturalWidth;
+          const h = img.naturalHeight;
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+          ctx.drawImage(img, 0, 0);
+          const data = ctx.getImageData(0, 0, w, h).data;
+
+          let minX = w;
+          let minY = h;
+          let maxX = -1;
+          let maxY = -1;
+
+          for (let y = 0; y < h; y += 1) {
+            for (let x = 0; x < w; x += 1) {
+              if (data[(y * w + x) * 4 + 3] > 20) {
+                if (x < minX) minX = x;
+                if (y < minY) minY = y;
+                if (x > maxX) maxX = x;
+                if (y > maxY) maxY = y;
+              }
+            }
+          }
+
+          if (maxX < minX || maxY < minY) {
+            return {
+              bounds: { minX: 0, minY: 0, maxX: w - 1, maxY: h - 1 },
+              parts: [{ cx: (w - 1) * 0.5, cy: (h - 1) * 0.5, w, h }]
+            };
+          }
+
+          const bw = maxX - minX + 1;
+          const bh = maxY - minY + 1;
+          const splitX = bw >= bh;
+          const bins = 4;
+          const partsRaw = Array.from({ length: bins }, () => ({ minX: w, minY: h, maxX: -1, maxY: -1, hit: 0 }));
+
+          for (let y = minY; y <= maxY; y += 1) {
+            for (let x = minX; x <= maxX; x += 1) {
+              if (data[(y * w + x) * 4 + 3] <= 20) continue;
+              const t = splitX ? (x - minX) / Math.max(1, bw - 1) : (y - minY) / Math.max(1, bh - 1);
+              const bi = Math.max(0, Math.min(bins - 1, Math.floor(t * bins)));
+              const p = partsRaw[bi];
+              if (x < p.minX) p.minX = x;
+              if (y < p.minY) p.minY = y;
+              if (x > p.maxX) p.maxX = x;
+              if (y > p.maxY) p.maxY = y;
+              p.hit += 1;
+            }
+          }
+
+          const parts = [];
+          for (const p of partsRaw) {
+            if (p.hit < 25 || p.maxX < p.minX || p.maxY < p.minY) continue;
+            const pw = p.maxX - p.minX + 1;
+            const ph = p.maxY - p.minY + 1;
+            if (pw * ph < 400) continue;
+            parts.push({
+              cx: (p.minX + p.maxX) * 0.5,
+              cy: (p.minY + p.maxY) * 0.5,
+              w: pw,
+              h: ph,
+            });
+          }
+
+          if (parts.length === 0) {
+            parts.push({
+              cx: (minX + maxX) * 0.5,
+              cy: (minY + maxY) * 0.5,
+              w: bw,
+              h: bh,
+            });
+          }
+
+          return { bounds: { minX, minY, maxX, maxY }, parts };
+        } catch {
+          const w = img.naturalWidth;
+          const h = img.naturalHeight;
+          return {
+            bounds: { minX: 0, minY: 0, maxX: w - 1, maxY: h - 1 },
+            parts: [{ cx: (w - 1) * 0.5, cy: (h - 1) * 0.5, w, h }]
+          };
+        }
+      }
+
+      function loadGlyph(g) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve({ g, img, shape: alphaShape(img) });
+          img.onerror = () => resolve({ g, img: null, shape: null });
+          img.src = g.src;
+        });
+      }
+
+      function partState(b, p) {
+        const off = rot(p.offX, p.offY, b.a);
+        const cx = b.x + off.x;
+        const cy = b.y + off.y;
+        const hw = p.w * 0.5;
+        const hh = p.h * 0.5;
+        const c = Math.cos(b.a);
+        const s = Math.sin(b.a);
+        const corners = [
+          { x: cx + (-hw * c - -hh * s), y: cy + (-hw * s + -hh * c) },
+          { x: cx + ( hw * c - -hh * s), y: cy + ( hw * s + -hh * c) },
+          { x: cx + ( hw * c -  hh * s), y: cy + ( hw * s +  hh * c) },
+          { x: cx + (-hw * c -  hh * s), y: cy + (-hw * s +  hh * c) }
+        ];
+        return { cx, cy, corners };
+      }
+
+      function bodyExtents(b) {
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+
+        for (const p of b.parts) {
+          const s = partState(b, p);
+          for (const c of s.corners) {
+            if (c.x < minX) minX = c.x;
+            if (c.y < minY) minY = c.y;
+            if (c.x > maxX) maxX = c.x;
+            if (c.y > maxY) maxY = c.y;
+          }
+        }
+
+        return { minX, minY, maxX, maxY };
+      }
+
+      function axes(corners) {
+        const out = [];
+        for (let i = 0; i < 2; i += 1) {
+          const p1 = corners[i];
+          const p2 = corners[(i + 1) % 4];
+          const ex = p2.x - p1.x;
+          const ey = p2.y - p1.y;
+          const nx = -ey;
+          const ny = ex;
+          const len = Math.hypot(nx, ny) || 1;
+          out.push({ x: nx / len, y: ny / len });
+        }
+        return out;
+      }
+
+      function project(corners, axis) {
+        let min = corners[0].x * axis.x + corners[0].y * axis.y;
+        let max = min;
+        for (let i = 1; i < corners.length; i += 1) {
+          const p = corners[i].x * axis.x + corners[i].y * axis.y;
+          if (p < min) min = p;
+          if (p > max) max = p;
+        }
+        return { min, max };
+      }
+
+      function sat(sa, sb) {
+        const testAxes = axes(sa.corners).concat(axes(sb.corners));
+        let minOverlap = Infinity;
+        let nx = 0;
+        let ny = 0;
+
+        for (const axis of testAxes) {
+          const pa = project(sa.corners, axis);
+          const pb = project(sb.corners, axis);
+          const overlap = Math.min(pa.max, pb.max) - Math.max(pa.min, pb.min);
+          if (overlap <= 0) return null;
+          if (overlap < minOverlap) {
+            minOverlap = overlap;
+            nx = axis.x;
+            ny = axis.y;
+          }
+        }
+
+        const dx = sb.cx - sa.cx;
+        const dy = sb.cy - sa.cy;
+        if (dx * nx + dy * ny < 0) {
+          nx = -nx;
+          ny = -ny;
+        }
+
+        return { overlap: minOverlap, nx, ny };
+      }
+
+      function applyImpulse(a, b, nx, ny, cx, cy) {
+        const rax = cx - a.x;
+        const ray = cy - a.y;
+        const rbx = cx - b.x;
+        const rby = cy - b.y;
+
+        const vax = a.vx - a.av * ray;
+        const vay = a.vy + a.av * rax;
+        const vbx = b.vx - b.av * rby;
+        const vby = b.vy + b.av * rbx;
+
+        const rvx = vbx - vax;
+        const rvy = vby - vay;
+        const vn = rvx * nx + rvy * ny;
+        if (vn > 0) return;
+
+        const raCn = cross(rax, ray, nx, ny);
+        const rbCn = cross(rbx, rby, nx, ny);
+        const denom = a.im + b.im + raCn * raCn * a.ii + rbCn * rbCn * b.ii;
+        if (denom <= 1e-8) return;
+
+        const j = -vn / denom;
+        const ix = j * nx;
+        const iy = j * ny;
+
+        a.vx -= ix * a.im;
+        a.vy -= iy * a.im;
+        a.av -= cross(rax, ray, ix, iy) * a.ii;
+
+        b.vx += ix * b.im;
+        b.vy += iy * b.im;
+        b.av += cross(rbx, rby, ix, iy) * b.ii;
+
+        const txRaw = rvx - vn * nx;
+        const tyRaw = rvy - vn * ny;
+        const tLen = Math.hypot(txRaw, tyRaw);
+        if (tLen > 1e-8) {
+          const tx = txRaw / tLen;
+          const ty = tyRaw / tLen;
+          const raCt = cross(rax, ray, tx, ty);
+          const rbCt = cross(rbx, rby, tx, ty);
+          const tDen = a.im + b.im + raCt * raCt * a.ii + rbCt * rbCt * b.ii;
+          if (tDen > 1e-8) {
+            const jtRaw = -(rvx * tx + rvy * ty) / tDen;
+            const jt = clamp(jtRaw, -j * cfg.friction, j * cfg.friction);
+            const tix = jt * tx;
+            const tiy = jt * ty;
+
+            a.vx -= tix * a.im;
+            a.vy -= tiy * a.im;
+            a.av -= cross(rax, ray, tix, tiy) * a.ii;
+
+            b.vx += tix * b.im;
+            b.vy += tiy * b.im;
+            b.av += cross(rbx, rby, tix, tiy) * b.ii;
+          }
+        }
+      }
+
+      function solvePair(a, b) {
+        for (const pa of a.parts) {
+          const sa = partState(a, pa);
+          for (const pb of b.parts) {
+            const sb = partState(b, pb);
+            const m = sat(sa, sb);
+            if (!m) continue;
+
+            const invMass = a.im + b.im;
+            if (invMass <= 1e-8) continue;
+
+            const corr = m.overlap / invMass;
+            const cx = m.nx * corr;
+            const cy = m.ny * corr;
+
+            a.x -= cx * a.im;
+            a.y -= cy * a.im;
+            b.x += cx * b.im;
+            b.y += cy * b.im;
+
+            applyImpulse(a, b, m.nx, m.ny, (sa.cx + sb.cx) * 0.5, (sa.cy + sb.cy) * 0.5);
+          }
+        }
+      }
+
+      function solveWorld(b) {
+        const e = bodyExtents(b);
+        const minX = e.minX;
+        const maxX = e.maxX;
+        const maxY = e.maxY;
+
+        if (minX < 0) { b.x += -minX; if (b.vx < 0) b.vx = 0; }
+        if (maxX > worldW) { b.x -= (maxX - worldW); if (b.vx > 0) b.vx = 0; }
+        if (maxY > worldH) {
+          b.y -= (maxY - worldH);
+          if (b.vy > 0) b.vy = 0;
+          b.vx *= 0.95;
+          b.av *= 0.9;
+        }
+      }
+
+      function integrate(dt) {
+        const ld = Math.max(0, 1 - cfg.linDamp * dt * 60);
+        const ad = Math.max(0, 1 - cfg.angDamp * dt * 60);
+
+        for (const b of bodies) {
+          b.vy += cfg.gravity * dt;
+          b.vx *= ld;
+          b.vy *= ld;
+          b.av *= ad;
+          b.x += b.vx * dt;
+          b.y += b.vy * dt;
+          b.a += b.av * dt;
+        }
+      }
+
+      function render() {
+        for (const b of bodies) {
+          b.el.style.transform = `translate3d(${b.x - b.w * 0.5}px, ${b.y - b.h * 0.5}px, 0) rotate(${b.a}rad)`;
+        }
+      }
+
+      function updateSettledState() {
+        if (interactionReady || bodies.length === 0) return;
+
+        let energy = 0;
+        for (const b of bodies) {
+          energy += Math.abs(b.vx) + Math.abs(b.vy) + Math.abs(b.av) * 28;
+        }
+
+        const settledThreshold = bodies.length * cfg.settleEnergyPerBody;
+        if (energy < settledThreshold) {
+          settleFrames += 1;
+        } else {
+          settleFrames = Math.max(0, settleFrames - 1);
+        }
+
+        if (settleFrames >= cfg.settleFramesNeeded || performance.now() - simStart > cfg.interactionMaxDelayMs) {
+          interactionReady = true;
+        }
+      }
+
+      function applyCursorForces(dt) {
+        if (!pointerActive) return;
+
+        const elapsed = performance.now() - simStart;
+        const canInteract = interactionReady || elapsed > cfg.interactionForceEnableMs || pointerDown;
+        if (!canInteract) return;
+
+        const radius = cfg.cursorRadius;
+        const radiusSq = radius * radius;
+        const boost = pointerDown ? cfg.cursorForceBoost : 1;
+        const moveMag = Math.hypot(pointer.vx, pointer.vy);
+        const moveFactor = Math.min(3.8, 1.35 + moveMag * 0.016);
+
+        for (const b of bodies) {
+          let dx = b.x - pointer.x;
+          let dy = b.y - pointer.y;
+          let d2 = dx * dx + dy * dy;
+
+          for (const p of b.parts) {
+            const s = partState(b, p);
+            const pdx = s.cx - pointer.x;
+            const pdy = s.cy - pointer.y;
+            const pd2 = pdx * pdx + pdy * pdy;
+            if (pd2 < d2) {
+              d2 = pd2;
+              dx = pdx;
+              dy = pdy;
+            }
+          }
+
+          if (d2 <= 0.0001 || d2 > radiusSq) continue;
+
+          const d = Math.sqrt(d2);
+          const nx = dx / d;
+          const ny = dy / d;
+          const falloff = (1 - d / radius) ** 2;
+          const force = cfg.cursorForce * boost * moveFactor * falloff;
+
+          b.vx += nx * force * dt;
+          b.vy += ny * force * dt;
+          b.x += nx * force * dt * 0.006;
+          b.y += ny * force * dt * 0.006;
+
+          b.av += cross(nx, ny, pointer.vx, pointer.vy) * cfg.cursorSpin * falloff;
+        }
+      }
+
+      function tick(now) {
+        const dt = Math.min((now - prevT) / 1000, 1 / 60);
+        prevT = now;
+
+        integrate(dt);
+        for (let i = 0; i < cfg.iterations; i += 1) {
+          for (const b of bodies) solveWorld(b);
+          for (let a = 0; a < bodies.length; a += 1) {
+            for (let b = a + 1; b < bodies.length; b += 1) {
+              solvePair(bodies[a], bodies[b]);
+            }
+          }
+        }
+
+        updateSettledState();
+        applyCursorForces(dt);
+        render();
+        requestAnimationFrame(tick);
+      }
+
+      function createBody(asset, idx) {
+        const { g, img, shape } = asset;
+
+        const el = document.createElement("div");
+        el.className = "glyph";
+        el.style.width = `${g.w}px`;
+        el.style.height = `${g.h}px`;
+        el.dataset.nodeId = g.id;
+
+        const imgEl = document.createElement("img");
+        imgEl.src = g.src;
+        imgEl.alt = "";
+        el.appendChild(imgEl);
+        world.appendChild(el);
+
+        const sx = g.w / Math.max(1, img.naturalWidth);
+        const sy = g.h / Math.max(1, img.naturalHeight);
+        const parts = (shape.parts || []).map((p) => {
+          const pw = Math.max(2, p.w * sx);
+          const ph = Math.max(2, p.h * sy);
+          const cx = p.cx * sx;
+          const cy = p.cy * sy;
+          return {
+            w: pw,
+            h: ph,
+            offX: cx - g.w * 0.5,
+            offY: cy - g.h * 0.5,
+          };
+        });
+
+        const areaSum = parts.reduce((acc, p) => acc + p.w * p.h, 0);
+        const m = Math.max(1, areaSum / 5200);
+        const inertia = (m * (g.w * g.w + g.h * g.h)) / 12;
+
+        bodies.push({
+          el,
+          w: g.w,
+          h: g.h,
+          x: rand(g.w * 0.5, Math.max(g.w * 0.5, worldW - g.w * 0.5)),
+          y: -rand(120, 2600) - idx * 70,
+          vx: rand(-40, 40),
+          vy: rand(0, 15),
+          a: rand(-0.6, 0.6),
+          av: rand(-1.2, 1.2),
+          parts,
+          im: 1 / m,
+          ii: 1 / inertia,
+        });
+      }
+
+      function onResize() {
+        worldW = window.innerWidth;
+        worldH = window.innerHeight;
+      }
+
+      function onPointerMove(e) {
+        const t = performance.now();
+        const dt = Math.max(1, t - (pointer.t || t));
+        pointer.vx = (e.clientX - pointer.x) / dt;
+        pointer.vy = (e.clientY - pointer.y) / dt;
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+        pointer.t = t;
+        pointerActive = true;
+      }
+
+      async function init() {
+        const loaded = await Promise.all(GLYPHS.map(loadGlyph));
+        const ready = loaded.filter((x) => x.img && x.shape);
+        ready.forEach(createBody);
+
+        onResize();
+        simStart = performance.now();
+        settleFrames = 0;
+        interactionReady = false;
+        window.addEventListener("resize", onResize);
+        world.addEventListener("pointermove", onPointerMove);
+        world.addEventListener("pointerdown", () => { pointerDown = true; pointerActive = true; });
+        world.addEventListener("pointerup", () => { pointerDown = false; });
+        world.addEventListener("pointercancel", () => { pointerDown = false; pointerActive = false; });
+        world.addEventListener("pointerleave", () => { pointerActive = false; pointer.vx = 0; pointer.vy = 0; });
+        requestAnimationFrame((t) => {
+          prevT = t;
+          tick(t);
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
